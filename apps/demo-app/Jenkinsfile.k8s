@@ -2,14 +2,54 @@ pipeline {
     agent none
     options { timeout(time:30, unit: 'MINUTES') }
     environment {
-        REGISTRY = 'ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com'
+        REGISTRY = '751476242691.dkr.ecr.eu-west-2.amazonaws.com'
         IMAGE = "${REGISTRY}/demo-app"
     }
     stages {
         stage('Build per architecture') {
             parallel {
-                stage('arm64')
+                stage('arm64') {
+                    agent {
+                        kubernetes {
+                            yamlFile 'apps/demo-app/ci/pod-arm64.yaml'
+                            defaultContainer 'python'
+                        }
+                    }
+                    steps { script { buildAndPush('arm64') } }
+                }
+                stage('amd64') {
+                    agent {
+                        kubernetes {
+                            yamlFile 'apps/demo-app/ci/pod-amd64.yaml'
+                            defaultContainer 'python'
+                        }
+                    }
+                    steps { script { buildAndPush('amd64') } }
+                }
             }
         }
+    }
+}
+
+def buildAndPush(String arch) {
+    dir('apps/demo-app') {
+        sh 'uname -m && pip install -q -r requirements.txt && pytest -q'
+    }
+    container('aws') {
+        sh '''
+            mkdir -p "$WORKSPACE/.docker"
+            PW=$(aws ecr get-login-password --region eu-west-2)
+            AUTH=$(printf "AWS:%s" "$PW" | base64 | tr -d '\\n')
+            printf '{"auths":{"%s":{"auth":"%s"}}}' "$REGISTRY" "$AUTH" \
+              > "$WORKSPACE/.docker/config.json"
+        '''
+    }
+    container('kaniko') {
+        sh """
+            export DOCKER_CONFIG=\$WORKSPACE/.docker
+            /kaniko/executor --context \$WORKSPACE/apps/demo-app \
+                --dockerfile \$WORKSPACE/apps/demo-app/Dockerfile \
+                --destination ${env.IMAGE}:\${BUILD_NUMBER}-${arch}
+        """
     }
 }
