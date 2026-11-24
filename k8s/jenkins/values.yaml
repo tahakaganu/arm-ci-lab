@@ -16,7 +16,7 @@ controller:
     configScripts:
       lab:  |
         unclassified:
-          lockableResourceManager:
+          lockableResourcesManager:
             declaredResources:
               - name: "eda-licence-1"
                 labels: "eda-licence"
