@@ -5,7 +5,7 @@ git
 cloudbees-folder
 credentials-binding
 aws-secrets-manager-credentials-provider
-lockablew-resources
+lockable-resources
 prometheus
 timestamper
 junit
