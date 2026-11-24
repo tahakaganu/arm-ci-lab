@@ -1,0 +1,53 @@
+controller:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+  containerEnv:
+    - name: AWS_REGION
+      value: eu-west-2
+  additionalPlugins:
+    - job-dsl
+    - cloudbees-folder
+    - aws-secrets-manager-credentials-provider
+    - lockable-resources
+    - prometheus
+    - timestamper
+    - junit
+  JCasC:
+    configScripts:
+      lab:  |
+        unclassified:
+          lockableResourceManager:
+            declaredResources:
+              - name: "eda-licence-1"
+                labels: "eda-licence"
+              - name: "eda-licence-2"
+                labels: "eda-licence"
+          globalLibraries:
+            libraries:
+              - name: "ci-shared-lib"
+                defaultVersion: "v1.0.1"
+                retriever:
+                  modernSCM:
+                    scm:
+                      git:
+                        remote: "https://github.com/tahakaganu/ci-shared-lib.git"
+        jobs:
+          - script: |
+              pipelineJob('demo-app-k8s') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote { url('https://github.com/tahakaganu/arm-ci-lab.git') }
+                        branch('*/main')
+                      }
+                    }
+                    scriptPath('apps/demo-app/Jenkinsfile.k8s')
+                  }
+                }
+              }
+serviceAccountAgent:
+  create: true
+  name: jenkins-agent
+persistence:
+  enabled: false
