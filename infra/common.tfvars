@@ -1,0 +1,5 @@
+region = "eu-west-2"
+project = "arm-ci-lab"
+state_bucket = "arm-ci-lab-tfstate-c1894ffe"
+my_ip = "38.44.104.36/32"
+github_repo = "https://github.com/tahakaganu/arm-ci-lab.git"

@@ -1,0 +1,54 @@
+jenkins:
+  systemMessage: "Arm CI Lab"
+  numExecutors: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  nodes:
+    - permanent:
+        labelString: "linux arm64 static"
+        name: "static-agent-1"
+        remoteFS: "/home/jenkins/agent"
+        numexecutors: 2
+        launcher:
+          inbound:
+            webSocket: true
+unclassified:
+  lockableResourcesManager:
+    declaredResources:
+      - name: "eda-licence-1"
+        labels: "eda-licence"
+    resources:
+      - name: "eda-licence-2"
+        labels: "eda-licence"
+  globalLibraries:
+    libraries:
+      - defaultVersion: "main"
+        name: "ci-shared-library"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://github.com/tahakaganu/ci-shared-lib.git"
+                credentialsId: "github-ssh-key"
+jobs:
+  - script: >
+      pipelineJob('demo-app') {
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('https://github.com/tahakaganu/arm-ci-lab.git') }
+                branches('*/main')
+              }
+            }
+            scriptPath('apps/demo-app/Jenkinsfile')
+            }
+          }
+        }

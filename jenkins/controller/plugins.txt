@@ -1,0 +1,12 @@
+configuration-as-code
+job-dsl
+workflow-aggregator
+git
+cloudbees-folder
+credentials-binding
+aws-secrets-manager-credentials-provider
+lockablew-resources
+prometheus
+timestamper
+junit
+pipeline-utility-steps
