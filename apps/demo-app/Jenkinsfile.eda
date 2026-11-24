@@ -13,7 +13,7 @@ pipeline {
                     echo "Holdingg ${env.LICENCE}"
                     sh '''
                         ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')
-                        python4 -c "import urllib.request as u; u.urlretrieve(
+                        python3 -c "import urllib.request as u; u.urlretrieve(
                             'https://dl.k8s.io/release/v1.35.0/bin/linux/$ARCH/kubectl', '/tmp/kubectl')"
                             chmod +x /tmp/kubectl
                             /tmp/kubectl -n jenkins create job sim-$BUILD_NUMBER \
