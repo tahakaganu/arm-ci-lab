@@ -1,0 +1,30 @@
+pipeline {
+    agent {
+        kubernetes {
+                yamlFile 'apps/demo-app/ci/pod-arm64.yaml'
+                defaultContainer 'python'
+        }
+    }
+    options { timeout (time:40, unit: 'MINUTES') }
+    stages {
+        stage('Regression (needs a licence)') {
+            steps {
+                lock(label: 'eda-licence', quantity: 1, variable: 'LICENCE') {
+                    echo "Holdingg ${env.LICENCE}"
+                    sh '''
+                        ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')
+                        python4 -c "import urllib.request as u; u.urlretrieve(
+                            'https://dl.k8s.io/release/v1.35.0/bin/linux/$ARCH/kubectl', '/tmp/kubectl')"
+                            chmod +x /tmp/kubectl
+                            /tmp/kubectl -n jenkins create job sim-$BUILD_NUMBER \
+                                --image=busybox -- sh -c "echo simulating; sleep 180; echo PASS"
+                            /tmp/kubectl -n jenkins wait --for=condition=complete \
+                                job/sim-$BUILD_NUMBER --timeout=30m
+                            /tmp/kubectl -n jenkins logs job/sim-$BUILD_NUMBER
+                            /tmp/kubectl -n jenkins delete job sim-$BUILD_NUMBER
+                    '''
+                }
+            }
+        }
+    }
+}
