@@ -1,4 +1,4 @@
-@Library('ci-shared-lib@v1.0.0') _
+@Library('ci-shared-lib@v1.0.1') _
 pipeline {
     agent { label'linux && arm64' }
     options {
