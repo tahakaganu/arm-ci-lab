@@ -23,7 +23,7 @@ module "eks" {
             capacity_type = "ON_DEMAND"
             min_size = 1
             max_size = 3
-            desired_size = 1
+            desired_size = 2
             labels = { pool = "arm64" }
         }
         x86 = {
