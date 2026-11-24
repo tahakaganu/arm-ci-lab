@@ -33,22 +33,22 @@ controller:
                         remote: "https://github.com/tahakaganu/ci-shared-lib.git"
         jobs:
           - script: |
-            def teams = ['cpu-verification', 'gpu-software', 'tools-infra']
-            teams.each { team ->
-              folder(team)
-              pipelineJob(team + '/demo-app-k8s') {
-                definition {
-                  cpsScm {
-                    scm {
-                      git {
-                        remote { url('https://github.com/tahakaganu/arm-ci-lab.git') }
-                        branch('*/main')
+              def teams = ['cpu-verification', 'gpu-software', 'tools-infra']
+              teams.each { team ->
+                folder(team)
+                pipelineJob(team + '/demo-app-k8s') {
+                  definition {
+                    cpsScm {
+                      scm {
+                        git {
+                          remote { url('https://github.com/tahakaganu/arm-ci-lab.git') }
+                          branch('*/main')
+                        }
                       }
+                      scriptPath('apps/demo-app/Jenkinsfile.k8s')
                     }
-                    scriptPath('apps/demo-app/Jenkinsfile.k8s')
                   }
                 }
-              }
 serviceAccountAgent:
   create: true
   name: jenkins-agent
