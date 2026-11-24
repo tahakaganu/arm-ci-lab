@@ -1,57 +1,19 @@
+@Library('ci-shared-lib"v1.0.0') _
 pipeline {
-  agent { label 'linux && arm64' }
-  options {
-    timeout(time: 20, unit: 'MINUTES')
-    timestamps()
-    buildDiscarder(logRotator(numToKeepStr: '20'))
-  }
-  environment { ARTIFACTS_BUCKET = 'arm-ci-lab-artifacts-d59f56f6' }
-  stages {
-    stage('Install') {
-      steps {
-        dir('apps/demo-app') {
-          sh 'python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt'
-        }
-      }
+    agent { label'linux && arm64' }
+    options {
+        timeout(time: 20, unit: 'MINUTES')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
     }
-    stage('Checks') {
-      parallel {
-        stage('Lint') {
-          steps {
-            dir('apps/demo-app') { sh '.venv/bin/pylint app.py' }
-          }
-        }
-        stage('Unit Tests') {
-          steps {
-            dir('apps/demo-app') {
-              sh '.venv/bin/pytest test_app.py --junitxml=reports/junit.xml'
+    stages {
+        stage('Checks') { steps { pythonCheck(dir: 'apps/demo-app') } }
+        stage('Publish') {
+            steps {
+                dir('apps/demo-app') { sh 'tar czf demo-app-${BUILD_NUMBER}.tgz app.py'}
+                publishToS3(bucket: arm-ci-lab-artifacts-d59f56f6, file: "apps/demo-app/demo-app-${BUILD_NUMBER}.tgz", prefix: 'demo-app')
             }
-          }
         }
-      }
     }
-    stage('Push artifact') {
-      when { expression { env.GIT_BRANCH == 'origin/main' } }
-      steps {
-        dir('apps/demo-app') {
-          sh '''
-            tar czf demo-app-${BUILD_NUMBER}.tar.gz app.py
-            aws s3 cp demo-app-${BUILD_NUMBER}.tar.gz s3://${ARTIFACTS_BUCKET}/demo-app/
-          '''
-        }
-      }
-    }
-    stage('Use a secret') {
-      steps {
-        withCredentials([string(credentialsId: 'lab-api-token', variable: 'TOKEN')]) {
-          sh 'echo "token has ${#TOKEN} characters"'
-        }
-      }
-    }
-  }
-  post {
-    always {
-      junit allowEmptyResults: true, testResults: 'apps/demo-app/reports/*.xml'
-    }
-  }
+    post { always { junit allowEmptyResults: true, testResults: 'apps/demo-app/reports/*.xml' } }
 }

@@ -37,9 +37,9 @@ resource "random_password" "token" {
 }
 
 resource "aws_secretsmanager_secret" "token" {
-  name = "lab-api-token"
+  name = "lab-token"
   recovery_window_in_days = 0
-  tags = { "jenkins:credential:type" = "string" }
+  tags = { "jenkins:credentials:type" = "string" }
 }
 
 resource "aws_secretsmanager_secret_version" "token" {
