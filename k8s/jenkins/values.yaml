@@ -36,7 +36,7 @@ controller:
             def teams = ['cpu-verification', 'gpu-software', 'tools-infra']
             teams.each { team ->
               folder(team)
-              pipelineJob('${team}/demo-app-k8s') {
+              pipelineJob(team + '/demo-app-k8s') {
                 definition {
                   cpsScm {
                     scm {
