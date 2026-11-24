@@ -49,6 +49,7 @@ controller:
                     }
                   }
                 }
+              }
 serviceAccountAgent:
   create: true
   name: jenkins-agent
