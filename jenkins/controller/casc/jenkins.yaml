@@ -24,7 +24,6 @@ unclassified:
     declaredResources:
       - name: "eda-licence-1"
         labels: "eda-licence"
-    resources:
       - name: "eda-licence-2"
         labels: "eda-licence"
   globalLibraries:
