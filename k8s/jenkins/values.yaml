@@ -49,6 +49,19 @@ controller:
                     }
                   }
                 }
+                pipelineJob(team + '/eda-regression') {
+                  definition {
+                    cpsScm {
+                      scm {
+                        git {
+                          remote { url('https://github.com/tahakaganu/arm-ci-lab.git') }
+                          branch('*/main')
+                        }
+                      }
+                      scriptPath('apps/demo-app/Jenkinsfile.eda')
+                    }
+                  }
+                }
               }
 serviceAccountAgent:
   create: true
