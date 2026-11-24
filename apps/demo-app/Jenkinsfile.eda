@@ -1,3 +1,4 @@
+@Library('ci-shared-lib@v1.1.0') _
 pipeline {
     agent {
         kubernetes {
@@ -26,5 +27,8 @@ pipeline {
                 }
             }
         }
+    }
+    post {
+        failure { aiTriage(modelId: 'meta.llama3-8b-instruct-v1:0') }
     }
 }
