@@ -11,7 +11,7 @@ pipeline {
         stage('Publish') {
             steps {
                 dir('apps/demo-app') { sh 'tar czf demo-app-${BUILD_NUMBER}.tgz app.py'}
-                publishToS3(bucket: 'arm-ci-lab-artifacts-d59f56f6', file: "apps/demo-app/demo-app-${BUILD_NUMBER}.tgz", prefix: 'demo-app')
+                publishToS3(bucket: 'arm-ci-lab-artifacts-ab1604ed', file: "apps/demo-app/demo-app-${BUILD_NUMBER}.tgz", prefix: 'demo-app')
             }
         }
     }
