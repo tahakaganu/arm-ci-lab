@@ -16,7 +16,7 @@ spec:
       chart: jenkins
       targetRevision: "CHART_VERSION"
       helm:
-        valueFields:
+        valueFiles:
           - $values/k8s/jenkins/values.yaml
     - repoURL: https://github.com/tahakaganu/arm-ci-lab.git
       targetRevision: main
