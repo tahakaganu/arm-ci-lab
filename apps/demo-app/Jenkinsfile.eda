@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Regression (needs a licence)') {
             steps {
-                lock(label: 'eda-licence', quantity: 1, variable: 'LICENCE') {
+                lock(resource: null, label: 'eda-licence', quantity: 1, variable: 'LICENCE') {
                     echo "Holdingg ${env.LICENCE}"
                     sh '''
                         ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')
