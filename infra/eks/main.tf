@@ -67,6 +67,10 @@ data "aws_iam_policy_document" "jenkins" {
         actions   = ["secretsmanager:ListSecrets"]
         resources = ["*"]
     }
+    statement {
+        actions   = ["bedrock:InvokeModel"]   # Converse uses this permission
+        resources = ["*"]                     # lab: tighten to the model ARN in production
+    }
 }
 
 resource "aws_iam_role_policy" "jenkins" {
