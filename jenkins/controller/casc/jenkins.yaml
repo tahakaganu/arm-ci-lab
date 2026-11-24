@@ -15,7 +15,7 @@ jenkins:
         labelString: "linux arm64 static"
         name: "static-agent-1"
         remoteFS: "/home/jenkins/agent"
-        numexecutors: 2
+        numExecutors: 2
         launcher:
           inbound:
             webSocket: true
@@ -29,13 +29,13 @@ unclassified:
   globalLibraries:
     libraries:
       - defaultVersion: "main"
-        name: "ci-shared-library"
+        name: "ci-shared-lib"
         retriever:
           modernSCM:
             scm:
               git:
                 remote: "https://github.com/tahakaganu/ci-shared-lib.git"
-                credentialsId: "github-ssh-key"
+
 jobs:
   - script: >
       pipelineJob('demo-app') {
