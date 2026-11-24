@@ -43,4 +43,15 @@ pipeline {
     }
     stage('Use a secret') {
       steps {
-        withCredentials([string(cred
+        withCredentials([string(credentialsId: 'lab-api-token', variable: 'TOKEN')]) {
+          sh 'echo "token has ${#TOKEN} characters"'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      junit allowEmptyResults: true, testResults: 'apps/demo-app/reports/*.xml'
+    }
+  }
+}
