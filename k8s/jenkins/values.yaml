@@ -33,7 +33,10 @@ controller:
                         remote: "https://github.com/tahakaganu/ci-shared-lib.git"
         jobs:
           - script: |
-              pipelineJob('demo-app-k8s') {
+            def teams = ['cpu-verification', 'gpu-software', 'tools-infra']
+            teams.each { team ->
+              folder(team)
+              pipelineJob('${team}/demo-app-k8s') {
                 definition {
                   cpsScm {
                     scm {
